@@ -9,7 +9,10 @@ const app = express();
 export const prisma = new PrismaClient();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(cors({
+  origin: ["https://library-frontend-nl13.onrender.com", "http://localhost:4173", "http://localhost:5173"],
+  credentials: true
+}));
 import authRoutes from './routes/authRoutes';
 
 import bookRoutes from './routes/bookRoutes';
