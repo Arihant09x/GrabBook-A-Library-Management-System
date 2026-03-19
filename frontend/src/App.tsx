@@ -9,22 +9,6 @@ import Dashboard from './pages/Dashboard';
 import MyBooks from './pages/MyBooks';
 import Admin from './pages/Admin';
 
-const ProtectedRoute = ({ children, requireAdmin = false }: { children: React.ReactNode, requireAdmin?: boolean }) => {
-  const { isAuthenticated, user, isLoading } = useAuth();
-  
-  if (isLoading) return null; // Or a loading spinner
-  
-  // Need to use effect or layout for consistent routing instead of returning null on fast loads. 
-  // Let the wrapper handle the auth check
-  const MainContent = () => {
-    if (!isAuthenticated) return <Navigate to="/login" />;
-    if (requireAdmin && user?.role !== 'ADMIN') return <Navigate to="/" />;
-    
-    return <>{children}</>;
-  };
-
-  return <MainContent />;
-};
 
 function RequireAuth({ children, requireAdmin = false }: { children: React.ReactNode, requireAdmin?: boolean }) {
   const { isAuthenticated, user } = useAuth();
