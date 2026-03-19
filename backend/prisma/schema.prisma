@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum BookStatus {
+  AVAILABLE
+  OUT_OF_STOCK
+}
+
+model User {
+  id               String      @id @default(uuid())
+  name             String
+  email            String      @unique
+  password         String?
+  otp              String?
+  otpExpiresAt     DateTime?
+  role             Role        @default(USER)
+  membership_limit Int         @default(5)
+  borrowings       Borrowing[]
+  publishedBooks   Book[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+model Book {
+  id               String      @id @default(uuid())
+  title            String
+  author           String
+  isbn             String      @unique
+  total_copies     Int
+  available_copies Int
+  status           BookStatus  @default(AVAILABLE)
+  adminId          String?
+  publisher        User?       @relation(fields: [adminId], references: [id])
+  borrowings       Borrowing[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+model Borrowing {
+  id          String    @id @default(uuid())
+  userId      String
+  bookId      String
+  borrowDate  DateTime  @default(now())
+  dueDate     DateTime
+  returnDate  DateTime?
+  fineAmount  Float     @default(0)
+  user        User      @relation(fields: [userId], references: [id])
+  book        Book      @relation(fields: [bookId], references: [id])
+}
